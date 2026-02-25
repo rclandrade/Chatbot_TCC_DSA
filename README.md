@@ -1,35 +1,59 @@
-# 🤖 TCC-DSA-Helper: Chatbot RAG para Assistência de TCC
-**Curso:** MBA em Data Science e Analytics - USP ESALQ
+# 🤖 TCC-DSA-Helper: Assistente Inteligente com RAG (Azure AI)
+**MBA em Data Science e Analytics - USP ESALQ**
 
-Este projeto consiste na implementação de um chatbot inteligente utilizando a arquitetura **RAG (Retrieval-Augmented Generation)** no **Azure AI Foundry**. O objetivo é auxiliar na organização e consulta de referências bibliográficas e diretrizes do meu TCC.
+Este repositório documenta a implementação de um sistema de **Retrieval-Augmented Generation (RAG)** hospedado no Azure. O projeto foi desenvolvido para atuar como um assistente técnico na organização e consulta de referências para o meu TCC.
 
-## 🚀 Tecnologias Utilizadas
-* **Azure AI Foundry:** Orquestração do projeto de IA.
-* **Azure OpenAI:** Modelos `gpt-4o` (Chat) e `text-embedding-3-large` (Embeddings).
-* **Azure AI Search:** Indexação e busca vetorial (Vector Search).
-* **Azure Blob Storage:** Armazenamento dos documentos base.
-* **App Service:** Hospedagem da interface web do chatbot.
+## 🚀 Arquitetura da Solução
+A solução utiliza uma abordagem de **Busca Vetorial (Vector Search)** para garantir que as respostas do modelo sejam fundamentadas em documentos específicos (Grounding), minimizando alucinações da IA.
+
+### 📋 Pré-requisitos e Infraestrutura
+* **Azure AI Services:** Modelos `gpt-4o` e `text-embedding-3-large`.
+* **Azure AI Search:** Gerenciamento de índices e busca semântica.
+* **Azure Blob Storage:** Repositório dos documentos brutos.
+
+---
 
 ## 🛠️ Passo a Passo da Implementação
 
-### 1. Provisionamento de Infraestrutura
-Configurei o ambiente no Azure garantindo que todos os recursos estivessem na mesma região para evitar latência e erros de validação.
-* **Storage Account:** `chatdata9`
-* **AI Search:** `diolabs9` (Tier Basic para suporte a vetores).
+### 1. Governança e Segurança (IAM)
+A segurança foi configurada via **Managed Identity**, eliminando a necessidade de chaves de API expostas no código. Atribui a função de *Storage Blob Data Contributor* para permitir que o serviço de IA acesse os documentos de forma segura.
 
-### 2. Gestão de Dados e Permissões (IAM)
-Um dos pontos cruciais foi a configuração de **Managed Identities** para garantir a segurança sem exposição de chaves de API.
-* Atribuição da Role **Storage Blob Data Contributor** para o projeto e para o serviço de busca.
-> *Insira aqui a sua imagem [image_16781c.jpg] mostrando as permissões configuradas.*
+![Configuração de Permissões](./img/Role_Assignments.jpeg)
+*Figura 1: Atribuição de funções IAM garantindo acesso via Identidade Gerenciada ao recurso de armazenamento.*
 
-### 3. Ingestão e Indexação Vetorial
-Realizei o upload dos documentos para o contêiner `blob-storage` e configurei a indexação.
-* **Busca Vetorial:** Utilizei o modelo `text-embedding-3-large` para transformar os documentos em vetores, permitindo uma busca semântica mais precisa.
-> *Insira aqui a sua imagem [image_15f87d.png] da configuração de Vector Search.*
+### 2. Armazenamento de Dados
+Criei um contêiner privado no **Azure Blob Storage** para servir como a base de conhecimento (Knowledge Base) do assistente.
 
-### 4. Deploy do Modelo e Playground
-Implementei o modelo `gpt-4o` e validei a capacidade de resposta do bot utilizando a técnica de RAG no Playground do Azure.
-> *Insira aqui a sua imagem [image_15f191.png] dos deployments ativos.*
+![Estrutura de Contêineres](./img/Container.jpeg)
+*Figura 2: Contêiner 'blob-storage' contendo os arquivos PDF/DOCX que alimentam o chatbot.*
 
-## 📈 Resultados
-O chatbot é capaz de responder perguntas complexas sobre o conteúdo do meu TCC, citando as fontes exatas armazenadas no Azure Blob Storage, garantindo respostas baseadas em fatos e reduzindo alucinações da IA.
+### 3. Indexação e Busca Vetorial
+O processo de ingestão converteu os documentos em vetores numéricos utilizando o modelo de embedding. Isso permite que o sistema entenda o contexto das perguntas, não apenas palavras-chave.
+
+![Configuração do Índice](./img/MLIndex.jpeg)
+*Figura 3: Criação do índice de busca integrando o Azure AI Search com suporte a Vector Search.*
+
+### 4. Orquestração de Modelos
+Utilizei o **Azure AI Foundry** para gerenciar os deployments. O sistema utiliza dois modelos em paralelo: um para processar o chat e outro para processar os vetores de busca.
+
+![Modelos Implantados](./img/Model_deployments.jpeg)
+*Figura 4: Status dos deployments para os modelos GPT-4o e Text-Embedding-3-Large.*
+
+### 5. Validação no Playground
+Antes da integração final, o sistema foi validado no ambiente de testes do Azure para garantir que o fluxo de recuperação de dados (Retrieval) estava funcionando corretamente.
+
+![Ambiente de Testes](./img/Playground.jpeg)
+*Figura 5: Interface de configuração do Chat Playground no Azure AI Foundry.*
+
+---
+
+## 📈 Resultados: Chatbot em Ação (RAG)
+O resultado final demonstra a IA respondendo perguntas complexas sobre o TCC, apresentando **citações diretas** dos documentos armazenados.
+
+![Resposta com RAG](./img/Chat_response_RAG.jpeg)
+*Figura 6: Demonstração da IA gerando respostas baseadas nos documentos (Grounding) com citações de fonte.*
+
+---
+
+## ⚙️ Desafios Superados
+Durante o desenvolvimento, enfrentei restrições de permissão de Tenant no Microsoft Entra ID. A solução foi focar na robustez do pipeline de dados e na validação via Playground, garantindo que a inteligência do sistema estivesse 100% funcional independente da interface de publicação.
