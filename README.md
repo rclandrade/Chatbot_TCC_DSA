@@ -18,31 +18,31 @@ A solução utiliza uma abordagem de **Busca Vetorial (Vector Search)** para gar
 ### 1. Governança e Segurança (IAM)
 A segurança foi configurada via **Managed Identity**, eliminando a necessidade de chaves de API expostas no código. Atribui a função de *Storage Blob Data Contributor* para permitir que o serviço de IA acesse os documentos de forma segura.
 
-![Configuração de Permissões](./img/Role_Assignments.jpeg)
+![Configuração de Permissões](./img/Role_Assignments.jpg)
 *Figura 1: Atribuição de funções IAM garantindo acesso via Identidade Gerenciada ao recurso de armazenamento.*
 
 ### 2. Armazenamento de Dados
 Criei um contêiner privado no **Azure Blob Storage** para servir como a base de conhecimento (Knowledge Base) do assistente.
 
-![Estrutura de Contêineres](./img/Container.jpeg)
+![Estrutura de Contêineres](./img/Container.jpg)
 *Figura 2: Contêiner 'blob-storage' contendo os arquivos PDF/DOCX que alimentam o chatbot.*
 
 ### 3. Indexação e Busca Vetorial
 O processo de ingestão converteu os documentos em vetores numéricos utilizando o modelo de embedding. Isso permite que o sistema entenda o contexto das perguntas, não apenas palavras-chave.
 
-![Configuração do Índice](./img/MLIndex.jpeg)
+![Configuração do Índice](./img/MLIndex.jpg)
 *Figura 3: Criação do índice de busca integrando o Azure AI Search com suporte a Vector Search.*
 
 ### 4. Orquestração de Modelos
 Utilizei o **Azure AI Foundry** para gerenciar os deployments. O sistema utiliza dois modelos em paralelo: um para processar o chat e outro para processar os vetores de busca.
 
-![Modelos Implantados](./img/Model_deployments.jpeg)
+![Modelos Implantados](./img/Model_deployments.jpg)
 *Figura 4: Status dos deployments para os modelos GPT-4o e Text-Embedding-3-Large.*
 
 ### 5. Validação no Playground
 Antes da integração final, o sistema foi validado no ambiente de testes do Azure para garantir que o fluxo de recuperação de dados (Retrieval) estava funcionando corretamente.
 
-![Ambiente de Testes](./img/Playground.jpeg)
+![Ambiente de Testes](./img/Playground.jpg)
 *Figura 5: Interface de configuração do Chat Playground no Azure AI Foundry.*
 
 ---
@@ -50,7 +50,7 @@ Antes da integração final, o sistema foi validado no ambiente de testes do Azu
 ## 📈 Resultados: Chatbot em Ação (RAG)
 O resultado final demonstra a IA respondendo perguntas complexas sobre o TCC, apresentando **citações diretas** dos documentos armazenados.
 
-![Resposta com RAG](./img/Chat_response_RAG.jpeg)
+![Resposta com RAG](./img/Chat_response_RAG.jpg)
 *Figura 6: Demonstração da IA gerando respostas baseadas nos documentos (Grounding) com citações de fonte.*
 
 ---
